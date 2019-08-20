@@ -19,7 +19,7 @@ git clone --depth=1 https://github.com/myriadrf/LimeSuite
 cd LimeSuite
 mkdir dirbuild
 cd dirbuild
-cmake ../
+cmake ../p
 make
 sudo make install
 sudo ldconfig
@@ -71,6 +71,7 @@ fi
 
 if  [ "$Platform" = "nano" ] ; then
 sudo apt-get install buffer ffmpeg
+sudo apt-get install libhackrf-dev libavutil-dev libavdevice-dev libswresample-dev libswscale-dev libavformat-dev libavcodec-dev
 fi
 
 
