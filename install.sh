@@ -31,6 +31,7 @@ cd ../../
 
 
 #Update Lime firmware 
+echo UPDATE the LIME firmware
 sudo LimeUtil --update
 
 #--------- Install LimeSDRTools --------------
