@@ -1,4 +1,23 @@
+# Check running on Nano
 source ./detect_platform.sh
+
+if  [ "$Platform" = "nano" ] ; then
+
+while true; do
+    read -p "Do you wish to install this program?" yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+else
+echo "You are not running on a Jetson Nano."
+echo "Exiting install."
+exit
+
+fi
 
 # Install environment for DVB with LimeSDR
 mkdir build
@@ -8,13 +27,22 @@ cd build
 # ------ Install LimeSuite ---------
 
 #Install debian packages for LimeSuite
+echo ".................................."
+echo "Installing packages for LimeSuite."
+echo ".................................."
 sudo apt-get update
 sudo apt-get install -y git g++ cmake libsqlite3-dev libi2c-dev libusb-1.0-0-dev netcat
 
 #Get FPGA mapping firmware
+echo "................................."
+echo "Installing FPGA mapping firmware."
+echo "................................."
 wget -q https://github.com/natsfr/LimeSDR_DVBSGateware/releases/download/v0.3/LimeSDR-Mini_lms7_trx_HW_1.2_auto.rpd -O LimeSDR-Mini_lms7_trx_HW_1.2_auto.rpd
 
 #Install latest LimeSuite
+echo "............................"
+echo "Installing latest LimeSuite."
+echo "............................"
 git clone --depth=1 https://github.com/myriadrf/LimeSuite
 cd LimeSuite
 mkdir dirbuild
@@ -23,19 +51,30 @@ cmake ../p
 make
 sudo make install
 sudo ldconfig
-# Work for Nano but not rpi : too fix
 cd ../udev-rules/
 chmod +x install.sh
 sudo ./install.sh
 cd ../../
 
-
+echo "................................"
+echo "Installing Lime firmware update."
+echo "..............................."
 #Update Lime firmware 
-echo UPDATE the LIME firmware
-sudo LimeUtil --update
+echo " "
+while true; do
+    read -p "Is your Lime plugged in and ready for firmware update?" yn
+    case $yn in
+        [Yy]* ) sudo LimeUtil --update; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 
 #--------- Install LimeSDRTools --------------
-
+echo "........................"
+echo "Installing LimeSDRTools."
+echo "........................"
 # Install debian packages
 
 git clone https://github.com/F5OEO/limesdr_toolbox
@@ -58,27 +97,18 @@ make dvb
 cp limesdr_dvb ../../bin/
 cd ../
 
-
-if  [ "$Platform" = "rpi" ] ; then
-echo installing avc2ts 
-#-------- For raspberry pi , install encoder avc2ts
-git clone https://github.com/F5OEO/avc2ts
-cd avc2ts
-./preinstall.sh
-make
-cp avc2ts ../../bin/
-cd ../
-fi
-
+echo ".................."
+echo "Installing ffmpeg."
+echo ".................."
 if  [ "$Platform" = "nano" ] ; then
 sudo apt-get install buffer ffmpeg
 sudo apt-get install libhackrf-dev libavutil-dev libavdevice-dev libswresample-dev libswscale-dev libavformat-dev libavcodec-dev
 fi
 
-
-#------For X86, install ffmpeg encoder
-
 #------- Install Leandvb -----------------
+echo "..................."
+echo "Installing Leandvb."
+echo "..................."
 git clone https://github.com/pabr/leansdr
 cd leansdr/src/apps
 git checkout work
@@ -88,6 +118,9 @@ cp leandvb ../../../../bin/
 cd ../../../
 
 #install Excellent Analog TV project from fsphil : hacktv
+echo ".................................."
+echo "Installing hacktv."
+echo ".................................."
 git clone https://github.com/F5OEO/hacktv
 cd hacktv
 sudo apt-get install libhackrf-dev
@@ -95,38 +128,11 @@ make
 cp hacktv ../../bin/
 cd ..
 
-#------- Raspberry : Install KisSpectrum -------------
-if  [ "$Platform" = "rpi" ] ; then
-
-#Install debian packages
-sudo apt-get install -y fftw3-dev libjpeg-dev autoconf ttf-dejavu-core
-
-git clone https://github.com/F5OEO/kisspectrum
-cd kisspectrum
-#install liquid-dsp library
-git clone --depth=1 https://github.com/jgaeddert/liquid-dsp
-cd liquid-dsp
-./bootstrap.sh  
-./configure
-make
-sudo make install
-cd ../
-
-#make 
-make
-cp kisspectrum ../../bin/
-cd ../
-
-#--------- Install csdr ----------------
-git clone https://github.com/simonyiszk/csdr
-cd csdr
-make && sudo make install
-cd ../
-
-fi 
 # End of install
 cd ../scripts
-echo "Installation finished, you scripts going to script folder "
+echo ".............................................."
+echo "Installation finished, going to script folder. "
+echo ".............................................."
 
 
 
