@@ -153,7 +153,7 @@ cp hacktv ../../bin/
 cd ..
 
 # End of install
-cd ../scripts
+cd ~/dvbsdr/scripts
 echo ".............................................."
 echo "Installation finished, going to script folder. "
 echo ".............................................."
